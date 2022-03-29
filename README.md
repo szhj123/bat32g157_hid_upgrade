@@ -1,0 +1,1 @@
+# bat32g157_hid_upgrade
