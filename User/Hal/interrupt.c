@@ -1,5 +1,5 @@
 /********************************************************
-* @file       main.c
+* @file       interrupt.c
 * @author     szhj13
 * @version    V1.0
 * @date       2021-08-12
@@ -10,21 +10,19 @@
 **********************************************************/
 
 /* Includes ---------------------------------------------*/
-#include <stdbool.h>
-#include <stdio.h>
-#include "BAT32G157.h"
-
+#include "hardware.h"
+#include "hal_timer.h"
 /* Private typedef --------------------------------------*/
 /* Private define ---------------------------------------*/
 /* Private macro ----------------------------------------*/
 /* Private function -------------------------------------*/
+void IRQ18_Handler(void) __attribute__((alias("tm40_channel0_interrupt")));
+
 /* Private variables ------------------------------------*/
-
-
-int main(void )
+static void tm40_channel0_interrupt(void )
 {
-	while(1)
-	{
-	}
+    INTC_ClearPendingIRQ(TM00_IRQn);    /* clear INTTM00 interrupt flag */
+
+    Hal_Timer_Isr_Handler();
 }
 

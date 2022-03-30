@@ -1,5 +1,5 @@
 /********************************************************
-* @file       main.c
+* @file       hal_timer.c
 * @author     szhj13
 * @version    V1.0
 * @date       2021-08-12
@@ -10,21 +10,27 @@
 **********************************************************/
 
 /* Includes ---------------------------------------------*/
-#include <stdbool.h>
-#include <stdio.h>
-#include "BAT32G157.h"
-
+#include "hal_timer.h"
 /* Private typedef --------------------------------------*/
 /* Private define ---------------------------------------*/
 /* Private macro ----------------------------------------*/
 /* Private function -------------------------------------*/
+
 /* Private variables ------------------------------------*/
+hal_timer_callback_t hal_timer_callback = NULL;
 
-
-int main(void )
+void Hal_Timer_Init(hal_timer_callback_t callback )
 {
-	while(1)
-	{
-	}
+    hal_timer_callback = callback;
+
+    Timer_Interval_Init();
+}
+
+void Hal_Timer_Isr_Handler(void )
+{
+    if(hal_timer_callback != NULL)
+    {
+        hal_timer_callback();
+    }
 }
 
