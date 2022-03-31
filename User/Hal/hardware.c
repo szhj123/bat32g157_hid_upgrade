@@ -16,6 +16,12 @@
 /* Private macro ----------------------------------------*/
 /* Private function -------------------------------------*/
 /* Private variables ------------------------------------*/
+void Systick_Init(void )
+{
+    SystemCoreClockUpdate();
+    
+    SysTick_Config(SystemCoreClock/1000);
+}
 
 void Timer_Interval_Init(void )
 {
@@ -37,5 +43,7 @@ void Timer_Interval_Init(void )
     TM40->TOE0 &= ~_0001_TM4_CH0_OUTPUT_ENABLE;
 
     TM40->TS0 |= TM4_CHANNEL_0;
+
+    INTC_EnableIRQ(TM00_IRQn);
 }
 

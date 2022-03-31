@@ -20,6 +20,12 @@ static void Drv_Timer_Isr_Callback(void );
 /* Private variables ------------------------------------*/
 timer_ctrl_block_t timerList[TIMER_MAX_NUM];
 
+static void timer_test(void *arg )
+{
+    PORT_ToggleBit(PORTD, PIN6);
+}
+
+
 void Drv_Timer_Init(void )
 {
     uint8_t i;
@@ -34,6 +40,10 @@ void Drv_Timer_Init(void )
     }
     
     Hal_Timer_Init(Drv_Timer_Isr_Callback);
+    
+    PORT_Init(PORTD, PIN6, OUTPUT);
+
+    Drv_Timer_Run_Period(timer_test, 0, 1000, NULL);
 }
 
 static uint8_t Drv_Timer_Regist(timer_handler_t handler, uint16_t ticks, uint16_t period, void *arg )

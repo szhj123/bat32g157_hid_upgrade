@@ -12,6 +12,7 @@
 /* Includes ---------------------------------------------*/
 #include "hardware.h"
 #include "hal_timer.h"
+#include "hal_task.h"
 /* Private typedef --------------------------------------*/
 /* Private define ---------------------------------------*/
 /* Private macro ----------------------------------------*/
@@ -19,10 +20,18 @@
 void IRQ18_Handler(void) __attribute__((alias("tm40_channel0_interrupt")));
 
 /* Private variables ------------------------------------*/
-static void tm40_channel0_interrupt(void )
+void tm40_channel0_interrupt(void )
 {
     INTC_ClearPendingIRQ(TM00_IRQn);    /* clear INTTM00 interrupt flag */
 
     Hal_Timer_Isr_Handler();
 }
+
+extern uint32_t g_ticks;
+void SysTick_Handler(void)
+{
+   g_ticks--;
+    Hal_Task_Isr_Handler();
+}
+
 

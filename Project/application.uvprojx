@@ -313,7 +313,7 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>2</Optim>
+            <Optim>1</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
             <OneElfS>1</OneElfS>
@@ -325,8 +325,8 @@
             <wLevel>2</wLevel>
             <uThumb>0</uThumb>
             <uSurpInc>0</uSurpInc>
-            <uC99>0</uC99>
-            <uGnu>0</uGnu>
+            <uC99>1</uC99>
+            <uGnu>1</uGnu>
             <useXO>0</useXO>
             <v6Lang>3</v6Lang>
             <v6LangP>3</v6LangP>
@@ -339,7 +339,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>..\CMSIS\Include;..\Device\Include;..\Driver\inc;..\User\App;..\User\Drv;..\User\Hal</IncludePath>
+              <IncludePath>..\CMSIS\Include;..\Device\Include;..\Driver\inc;..\User\Usb\usb_driver\inc;..\User\Usb\usb_phid_apl\inc;..\User\App;..\User\Drv;..\User\Hal</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -423,6 +423,21 @@
               <FileType>1</FileType>
               <FilePath>..\User\App\main.c</FilePath>
             </File>
+            <File>
+              <FileName>usb_phid_descriptor.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\Usb\usb_phid_descriptor.c</FilePath>
+            </File>
+            <File>
+              <FileName>usb_phid_echo_apl.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\Usb\usb_phid_echo_apl.c</FilePath>
+            </File>
+            <File>
+              <FileName>usb_phid_keyboard_apl.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\Usb\usb_phid_keyboard_apl.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -432,6 +447,16 @@
               <FileName>drv_timer.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\User\Drv\drv_timer.c</FilePath>
+            </File>
+            <File>
+              <FileName>drv_task.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\Drv\drv_task.c</FilePath>
+            </File>
+            <File>
+              <FileName>usb_phid_driver.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\Usb\usb_phid_apl\src\usb_phid_driver.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -452,6 +477,21 @@
               <FileName>interrupt.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\User\Hal\interrupt.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_task.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\Hal\hal_task.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Usb_driver_lib</GroupName>
+          <Files>
+            <File>
+              <FileName>usb_phid_driver.lib</FileName>
+              <FileType>4</FileType>
+              <FilePath>..\User\Usb\usb_driver\usb_phid_driver.lib</FilePath>
             </File>
           </Files>
         </Group>
