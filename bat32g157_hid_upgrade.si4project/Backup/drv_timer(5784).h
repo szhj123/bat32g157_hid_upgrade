@@ -18,7 +18,7 @@ typedef struct _timer_ctrl_block_t
 }timer_ctrl_block_t;
 
 void Drv_Timer_Init(void );
-uint8_t Drv_Timer_Run_Oneshot(timer_handler_t handler, uint16_t ticks, void *arg );
+uint8_t Drv_Timer_Run_Oneshort(timer_handler_t handler, uint16_t ticks, void *arg );
 uint8_t Drv_Timer_Run_Period(timer_handler_t handler, uint16_t ticks, uint16_t period, void *arg );
 void Drv_Timer_Delete(uint8_t timerId );
 

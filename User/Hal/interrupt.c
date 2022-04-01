@@ -27,10 +27,8 @@ void tm40_channel0_interrupt(void )
     Hal_Timer_Isr_Handler();
 }
 
-extern uint32_t g_ticks;
 void SysTick_Handler(void)
 {
-   g_ticks--;
     Hal_Task_Isr_Handler();
 }
 

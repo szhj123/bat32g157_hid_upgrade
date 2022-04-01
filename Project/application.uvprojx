@@ -429,14 +429,9 @@
               <FilePath>..\User\Usb\usb_phid_descriptor.c</FilePath>
             </File>
             <File>
-              <FileName>usb_phid_echo_apl.c</FileName>
+              <FileName>usb_phid_custom_apl.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\User\Usb\usb_phid_echo_apl.c</FilePath>
-            </File>
-            <File>
-              <FileName>usb_phid_keyboard_apl.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\User\Usb\usb_phid_keyboard_apl.c</FilePath>
+              <FilePath>..\User\Usb\usb_phid_custom_apl.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -22,6 +22,15 @@
 /* Private macro ----------------------------------------*/
 /* Private function -------------------------------------*/
 /* Private variables ------------------------------------*/
+uint32_t g_ticks;
+
+void usb_cpu_delay_xms(uint32_t n)
+{
+    g_ticks = n;
+
+    while(g_ticks);
+}
+
 void usb_cpu_delay_1us (uint16_t time)
 {
     uint16_t sf_cnt;
@@ -33,24 +42,15 @@ void usb_cpu_delay_1us (uint16_t time)
     }
 }
 
-void usb_cpu_delay_xms(uint16_t n)
-{
-    uint16_t i;
-
-    for(i=0;i<n;i++)
-    {
-        usb_cpu_delay_1us(1000);
-    }
-}
-
-
 int main(void )
 {
     Drv_Task_Init();
 
     Drv_Timer_Init();
 	
-	Usb_Init(); /* USB sample application */
+	usb_main(); /* USB sample application */
+
+    
     
 	while(1)
 	{

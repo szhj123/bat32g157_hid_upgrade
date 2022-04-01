@@ -68,7 +68,7 @@ static uint8_t Drv_Timer_Regist(timer_handler_t handler, uint16_t ticks, uint16_
     return TIMER_NULL;
 }
 
-uint8_t Drv_Timer_Run_Oneshot(timer_handler_t handler, uint16_t ticks, void *arg )
+uint8_t Drv_Timer_Run_Oneshort(timer_handler_t handler, uint16_t ticks, void *arg )
 {
     return Drv_Timer_Regist(handler, ticks, 0, arg );
 }

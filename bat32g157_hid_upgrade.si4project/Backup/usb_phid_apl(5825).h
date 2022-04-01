@@ -46,7 +46,6 @@ extern  const   uint8_t g_apl_device[];
 extern  const   uint8_t g_apl_configuration[];
 extern  const   uint8_t *gp_apl_string_table[];
 extern  const   uint8_t g_apl_report[];
-extern  const   uint16_t REPORT_DESCRIPTOR_SIZE;
 
 extern uint8_t g_remote_wakeup_enable;
 
@@ -54,7 +53,7 @@ extern uint8_t g_remote_wakeup_enable;
  Exported global functions (to be accessed by other files)
  ******************************************************************************/
 
-void Usb_Init(void);
+void Usb_Init (void);
 
 #endif /* USB_PHID_APL_H */
 /******************************************************************************

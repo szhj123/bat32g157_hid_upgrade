@@ -13,11 +13,12 @@
 #include "usb_phid_apl_config.h"
 #include "BAT32G157.h"
 
+#include "drv_timer.h"
+
 /*******************************************************************************
  Macro definitions
  ******************************************************************************/
 
-#define DATA_LEN                (8)
 #define HID_DESCRIPTOR_SIZE     (9)
 #define REPORT_DESCRIPTOR_SIZE  (76)
 #define HID_DESCRIPTOR_INDEX    (18)
@@ -30,12 +31,15 @@
  Exported global variables (to be accessed by other files)
  ******************************************************************************/
 
+/******************************************************************************
+ Macro definitions
+ ***************************************************************************#***/
+#define DATA_LEN    (64)
+
 /*******************************************************************************
  Private global variables and functions
  ******************************************************************************/
-
-static  uint8_t         gs_status    = NO_WRITING;           /* HID device is the HID data transfer status or not */
-static  uint16_t        gs_numlock   = 0;
+static uint8_t gs_data[DATA_LEN];
 static  uint8_t         gs_idle      = 0;
 
 const static usb_descriptor_t gs_usb_descriptor =
@@ -49,59 +53,50 @@ const static usb_descriptor_t gs_usb_descriptor =
     NUM_STRING_DESCRIPTOR
 };
 
-
+static void Usb_Handler(void *arg );
+static usb_ctrl_t  ctrl;
+static usb_cfg_t   cfg;
+static uint8_t     *p_idle_value;
 /******************************************************************************
-  * Function Name: usb_main
+  * Function Name: Usb_Init
   * Description  : Peripheral HID application main process
   * Arguments    : none
   * Return Value : none
  ******************************************************************************/
-void usb_main (void)
+void Usb_Init (void)
 {
-    usb_ctrl_t  ctrl;
-    usb_cfg_t   cfg;
-    uint8_t     *p_idle_value;
-    usb_info_t  info;
-    usb_err_t   ret_code = USB_SUCCESS;
-
     ctrl.type       = USB_PHID;
     cfg.usb_mode    = USB_PERI;
     /* Descriptor registration */
     cfg.p_usb_reg     = (usb_descriptor_t *)&gs_usb_descriptor;
     USB_Open (&ctrl, &cfg);       /* Initializes the USB module */
-    
-    while (1)
+
+    Drv_Timer_Run_Period(Usb_Handler, 0, 1, NULL);
+}
+
+static void Usb_Handler(void *arg )
+{
     {
         switch (USB_GetEvent(&ctrl))
         {
             case USB_STS_CONFIGURED :
-                gs_status = NO_WRITING;
-                #if defined(USE_LPW)
-                    /* Do Nothing */
-                #endif /* defined(USE_LPW) */
+                break;
+           case USB_STS_WRITE_COMPLETE :
+                ctrl.type = USB_PHID;
+                USB_Read(&ctrl, gs_data, DATA_LEN);
                 break;
 
-            case USB_STS_WRITE_COMPLETE :
-                if(DATA_WRITING == gs_status)
-                {
-                    gs_status = ZERO_WRITING;
-                    /* Sending the zero data (8 bytes) */
-                    ctrl.type = USB_PHID;
-                }
-                else
-                {
-                    gs_status = NO_WRITING;
-                }
-
+            case USB_STS_READ_COMPLETE :
+                ctrl.type = USB_PHID;
+                USB_Write(&ctrl, gs_data, ctrl.size);
                 break;
-
             case USB_STS_REQUEST : /* Receive Class Request */
                 if (USB_REQUEST_TYPE_CLASS == (ctrl.setup.type & USB_REQUEST_TYPE_CLASS))
                 {
                     if (USB_SET_REPORT == (ctrl.setup.type & USB_BREQUEST))
                     {
-                        /* Get the NumLock data (NumLock data is not used) */
-                        USB_Read(&ctrl, (uint8_t *)&gs_numlock, 2);
+                         uint16_t gs_numlock;
+                         USB_Read(&ctrl, (uint8_t *)&gs_numlock, 2);
                     }
 
                     if (USB_SET_IDLE == (ctrl.setup.type & USB_BREQUEST))
@@ -207,5 +202,5 @@ void usb_main (void)
                 break;
         }
     }
-} /* End of function usb_main */
+} /* End of function Usb_Init */
 

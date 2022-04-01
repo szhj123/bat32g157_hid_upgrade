@@ -1,4 +1,2 @@
----- gs_data Matches (3 in 2 files) ----
-usb_main in usb_phid_echo_apl.c (User\Usb) :                 USB_Read(&ctrl, gs_data, DATA_LEN);
-usb_main in usb_phid_echo_apl.c (User\Usb) :                 USB_Write(&ctrl, gs_data, ctrl.size);
-usb_phid_keyboard_apl.c (User\Usb) line 37 : static  uint8_t         gs_data[]    = {0, 0, 0, 0, 0, 0, 0, 0}; /* HID data */
+---- ITEM_LEN Matches (1 in 1 files) ----
+usb_phid_descriptor.c (User\Usb) line 27 : #define ITEM_LEN            (76-18)

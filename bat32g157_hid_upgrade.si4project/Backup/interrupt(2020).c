@@ -1,5 +1,5 @@
 /********************************************************
-* @file       main.c
+* @file       interrupt.c
 * @author     szhj13
 * @version    V1.0
 * @date       2021-08-12
@@ -10,51 +10,28 @@
 **********************************************************/
 
 /* Includes ---------------------------------------------*/
-#include <stdbool.h>
-#include <stdio.h>
-#include "BAT32G157.h"
-
-#include "drv_task.h"
-#include "drv_timer.h"
-#include "usb_phid_apl.h"
+#include "hardware.h"
+#include "hal_timer.h"
+#include "hal_task.h"
 /* Private typedef --------------------------------------*/
 /* Private define ---------------------------------------*/
 /* Private macro ----------------------------------------*/
 /* Private function -------------------------------------*/
+void IRQ18_Handler(void) __attribute__((alias("tm40_channel0_interrupt")));
+
 /* Private variables ------------------------------------*/
-void usb_cpu_delay_1us (uint16_t time)
+void tm40_channel0_interrupt(void )
 {
-    uint16_t sf_cnt;
-    sf_cnt = time * 20;
+    INTC_ClearPendingIRQ(TM00_IRQn);    /* clear INTTM00 interrupt flag */
 
-    while(sf_cnt)
-    {
-        sf_cnt --;
-    }
+    Hal_Timer_Isr_Handler();
 }
 
-void usb_cpu_delay_xms(uint16_t n)
+extern uint32_t g_ticks;
+void SysTick_Handler(void)
 {
-    uint16_t i;
-
-    for(i=0;i<n;i++)
-    {
-        usb_cpu_delay_1us(1000);
-    }
-}
-
-
-int main(void )
-{
-    Drv_Task_Init();
-
-    Drv_Timer_Init();
-	
-	Usb_Init(); /* USB sample application */
-    
-	while(1)
-	{
-	}
+   g_ticks--;
+    Hal_Task_Isr_Handler();
 }
 
 
