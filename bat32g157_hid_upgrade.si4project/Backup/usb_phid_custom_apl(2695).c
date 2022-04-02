@@ -61,7 +61,6 @@ usb_err_t   ret_code = USB_SUCCESS;
 
 static void Usb_Send_Test(void *arg )
 {
-    #if 0
     static uint16_t sendVal;
     uint8_t i;
     
@@ -76,10 +75,6 @@ static void Usb_Send_Test(void *arg )
     ctrl.type = USB_PHID;
 
     USB_Write(&ctrl, gs_data, 64);
-    #else
-    ctrl.type = USB_PHID;
-    USB_Read(&ctrl, gs_data, DATA_LEN);
-    #endif 
 
     
 }
@@ -100,9 +95,7 @@ void Usb_Init (void)
 
     Drv_Timer_Run_Period(Usb_Handler, 0, 1, NULL);
 
-    Drv_Timer_Run_Oneshot(Usb_Send_Test, 2000, NULL);
-
-    
+    Drv_Timer_Run_Period(Usb_Send_Test, 2000, 1000, NULL);
 }
 
 static void Usb_Handler(void *arg )
@@ -117,12 +110,11 @@ static void Usb_Handler(void *arg )
             break;
 
         case USB_STS_WRITE_COMPLETE :
-		    ctrl.type = USB_PHID;
-            USB_Read(&ctrl, gs_data, DATA_LEN);
+
             break;
         case USB_STS_READ_COMPLETE:
-             ctrl.type = USB_PHID;
-             USB_Write(&ctrl, gs_data, ctrl.size);
+            //ctrl.type = USB_PHID;
+            //USB_Write(&ctrl, gs_data, DATA_LEN);
             break;
 
         case USB_STS_REQUEST : /* Receive Class Request */

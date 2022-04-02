@@ -20,12 +20,12 @@
 
 /* [Vendor ID & Product ID setting] */
 #define USB_VENDORID        (0x0000)
-#define USB_PRODUCTID       (0x0013)
+#define USB_PRODUCTID       (0x0015)
 
 
 #define USB_IFPROTOCOL      (USB_IFPRO_KBD)
 #define MXPS                (64u)
-#define NUM_EP              (2)
+#define NUM_EP              (1)
 
 /************************************************************
  *  HID Report Discriptor for Keyboard                      *
@@ -83,7 +83,7 @@ const uint8_t g_apl_device[] =
  *  Configuration Descriptor                                *
  ************************************************************/
 
-#define     CD_LEN      (41)    /* Configuration Descriptor Length */
+#define     CD_LEN      (34)    /* Configuration Descriptor Length */
 
 const uint8_t g_apl_configuration[CD_LEN + (CD_LEN % 2)] =
 {
@@ -95,7 +95,7 @@ const uint8_t g_apl_configuration[CD_LEN + (CD_LEN % 2)] =
     1,                                                          /*  5:bConfigurationValue */
     4,                                                          /*  6:iConfiguration */
     /* Support RemoteWakeUp */
-    (uint8_t) (USB_CF_RESERVED | USB_CF_SELFP),                 /*  7:bmAttributes */
+    (uint8_t) (USB_CF_RESERVED | USB_CF_SELFP | USB_CF_RWUPON), /*  7:bmAttributes */
 
     (uint8_t) (100 / 2),                                        /*  8:bMaxPower (2mA unit) */
 
@@ -118,21 +118,13 @@ const uint8_t g_apl_configuration[CD_LEN + (CD_LEN % 2)] =
     0x00,                                                       /*  4:bCountryCode */
     0x01,                                                       /*  5:bNumDescriptors */
     0x22,                                                       /*  6:bDescriptorType */
-    (uint8_t )(sizeof(g_apl_report) & 0x00ff),                  /*  7:wItemLength(L) */
-    (uint8_t )((sizeof(g_apl_report) & 0xff00) >> 8),           /*  8:wItemLength(H) */
+    (uint8_t )(sizeof(g_apl_report) & 0x00ff),                           /*  7:wItemLength(L) */
+    (uint8_t )((sizeof(g_apl_report) & 0xff00) >> 8),                    /*  8:wItemLength(H) */
 
     /* Endpoint Descriptor 0 */
     USB_ED_BLENGTH,                                             /*  0:bLength */
     USB_DT_ENDPOINT,                                            /*  1:bDescriptorType */
     (uint8_t) (USB_EP_IN | USB_EP1),                            /*  2:bEndpointAddress */
-    USB_EP_INT,                                                 /*  3:bmAttribute */
-    MXPS,                                                       /*  4:wMaxPacketSize_lo */
-    0,                                                          /*  5:wMaxPacketSize_hi */
-    0x0A,                                                       /*  6:bInterval */
-     /* Endpoint Descriptor 1 */
-    USB_ED_BLENGTH,                                             /*  0:bLength */
-    USB_DT_ENDPOINT,                                            /*  1:bDescriptorType */
-    (uint8_t) (USB_EP_OUT | USB_EP2),                           /*  2:bEndpointAddress */
     USB_EP_INT,                                                 /*  3:bmAttribute */
     MXPS,                                                       /*  4:wMaxPacketSize_lo */
     0,                                                          /*  5:wMaxPacketSize_hi */
