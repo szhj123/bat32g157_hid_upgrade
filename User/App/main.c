@@ -16,7 +16,10 @@
 
 #include "drv_task.h"
 #include "drv_timer.h"
+#include "drv_lcd.h"
 #include "usb_phid_apl.h"
+#include "cm_backtrace.h"
+
 /* Private typedef --------------------------------------*/
 /* Private define ---------------------------------------*/
 /* Private macro ----------------------------------------*/
@@ -43,18 +46,33 @@ void usb_cpu_delay_xms(uint16_t n)
     }
 }
 
+void fault_test_by_div0(void )
+{
+    uint8_t buf[4] = {0};
+
+    uint32_t *u32Ptr = (uint32_t *)&buf[1];
+
+    *u32Ptr = 0x55;
+}
+
 
 int main(void )
 {
     Drv_Task_Init();
 
     Drv_Timer_Init();
+
+    Drv_Lcd_Init();
 	
 	Usb_Init(); /* USB sample application */
+
+    cm_backtrace_init("CmBacktrace", "0.0.1", "0.0.1");
     
 	while(1)
 	{
 	}
 }
+
+
 
 

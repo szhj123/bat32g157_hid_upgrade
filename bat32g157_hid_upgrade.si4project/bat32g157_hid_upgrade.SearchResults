@@ -1,2 +1,4 @@
----- ITEM_LEN Matches (1 in 1 files) ----
-usb_phid_descriptor.c (User\Usb) line 27 : #define ITEM_LEN            (76-18)
+---- Drv_Lcd_Init Matches (3 in 3 files) ----
+drv_lcd.c (User\Drv) line 43 : void Drv_Lcd_Init(void )
+drv_lcd.h (User\Drv) line 13 : void Drv_Lcd_Init(void );
+main in main.c (User\App) :     Drv_Lcd_Init();

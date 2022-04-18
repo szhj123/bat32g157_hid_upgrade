@@ -189,7 +189,7 @@
             <hadIRAM2>0</hadIRAM2>
             <hadIROM2>0</hadIROM2>
             <StupSel>8</StupSel>
-            <useUlib>0</useUlib>
+            <useUlib>1</useUlib>
             <EndSel>0</EndSel>
             <uLtcg>0</uLtcg>
             <nSecure>0</nSecure>
@@ -300,7 +300,7 @@
               </OCR_RVCT8>
               <OCR_RVCT9>
                 <Type>0</Type>
-                <StartAddress>0x20000000</StartAddress>
+                <StartAddress>0x200002c0</StartAddress>
                 <Size>0x8000</Size>
               </OCR_RVCT9>
               <OCR_RVCT10>
@@ -339,7 +339,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>..\CMSIS\Include;..\Device\Include;..\Driver\inc;..\User\Usb\usb_driver\inc;..\User\Usb\usb_phid_apl\inc;..\User\App;..\User\Drv;..\User\Hal</IncludePath>
+              <IncludePath>..\CMSIS\Include;..\Device\Include;..\Driver\inc;..\User\Usb\usb_driver\inc;..\User\Usb\usb_phid_apl\inc;..\User\App;..\User\Drv;..\User\Hal;..\cm_backtrace;..\cm_backtrace\Languages\en-US</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -413,6 +413,41 @@
               <FileType>1</FileType>
               <FilePath>..\Driver\src\gpio.c</FilePath>
             </File>
+            <File>
+              <FileName>sci.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Driver\src\sci.c</FilePath>
+            </File>
+            <File>
+              <FileName>sci_user.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Driver\src\sci_user.c</FilePath>
+            </File>
+            <File>
+              <FileName>retarget.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Driver\src\retarget.c</FilePath>
+            </File>
+            <File>
+              <FileName>dma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Driver\src\dma.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>cm_backtrace</GroupName>
+          <Files>
+            <File>
+              <FileName>cm_backtrace.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\cm_backtrace\cm_backtrace.c</FilePath>
+            </File>
+            <File>
+              <FileName>cmb_fault.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\cm_backtrace\fault_handler\keil\cmb_fault.S</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -453,6 +488,16 @@
               <FileType>1</FileType>
               <FilePath>..\User\Usb\usb_phid_apl\src\usb_phid_driver.c</FilePath>
             </File>
+            <File>
+              <FileName>drv_lcd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\Drv\drv_lcd.c</FilePath>
+            </File>
+            <File>
+              <FileName>drv_ili9341.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\Drv\drv_ili9341.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -477,6 +522,11 @@
               <FileName>hal_task.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\User\Hal\hal_task.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_lcd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\Hal\hal_lcd.c</FilePath>
             </File>
           </Files>
         </Group>

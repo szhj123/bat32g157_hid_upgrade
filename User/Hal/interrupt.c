@@ -18,6 +18,7 @@
 /* Private macro ----------------------------------------*/
 /* Private function -------------------------------------*/
 void IRQ18_Handler(void) __attribute__((alias("tm40_channel0_interrupt")));
+void IRQ15_Handler(void) __attribute__((alias("lcdb_interrupt")));
 
 /* Private variables ------------------------------------*/
 void tm40_channel0_interrupt(void )
@@ -32,4 +33,10 @@ void SysTick_Handler(void)
     Hal_Task_Isr_Handler();
 }
 
+void lcdb_interrupt(void )
+{
+    INTC_ClearPendingIRQ(LCDB_IRQn);     /* clear LCDB interrupt flag */
+
+    LCDB_Isr_Handler();
+}
 
