@@ -20,6 +20,8 @@ Includes
 Pragma directive
 ***********************************************************************************************************************/
 void IRQ07_Handler(void) __attribute__((alias("uart0_interrupt_send")));
+void IRQ08_Handler(void) __attribute__((alias("spi01_interrupt")));
+
 
 #if defined USE_SCI_UART0_RX
 void IRQ08_Handler(void) __attribute__((alias("uart0_interrupt_receive")));

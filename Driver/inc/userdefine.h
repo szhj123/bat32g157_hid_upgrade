@@ -722,12 +722,23 @@ typedef enum
   */
 
 /* ToDo: You can allocate the SS01 to any desired pins */
-#define SS01_PORT_SETTING() //do{ \
+#if 0
+#define SS01_PORT_SETTING() do{ \
         PORT->P62CFG = 0x00;         /* P62 default GPIO function */ \
         PORT->PSET6 =  (1 << 2);     /* P62 output high level */ \
         PORT->PM6  &= ~(1 << 2);     /* P62 is used as SS01 output */ \
         PORT->PMC6 &= ~(1 << 2);     /* P62 digital function */ \
 }while(0)
+#else
+#define SS01_PORT_SETTING() do{ \
+        PORT->PA11CFG = PTCFG_DFT;   /* PA11 default Alternate function */ \
+        PORT->PSETA =  (1 << 11);    /* PA11 output high level */ \
+        PORT->PMA  &= ~(1 << 11);    /* PA11 is used as SS01 output */ \
+        PORT->POMA &= ~(1 << 11);    /* PA11 is normal output mode */ \
+        PORT->PMCA &= ~(1 << 11);    /* PA11 digital function */ \
+}while(0)
+
+#endif 
 
 /* ToDo: You can allocate the SS01 to any desired pins */
 #define SS01_PORT_SET() //do{ \
@@ -1287,6 +1298,7 @@ typedef enum
   */
 
 /* ToDo: You can allocate the SCLA0 to any desired pins with SCLA0PCFG register */
+#if 0
 #define SCLA0_PORT_SETTING() do{ \
         PORT->SCLA0PCFG = PTCFG_PD08;/* allocate SCLA0 to PD08 */ \
         PORT->PCLRD =  (1 << 8);    /* PD08 output low level */ \
@@ -1295,8 +1307,18 @@ typedef enum
         PORT->POMD |=  (1 << 8);    /* PD08 is used as Open Drain output */ \
         PORT->PMCD &= ~(1 << 8);    /* PD08 digital function */ \
 }while(0)
+#else
+#define SCLA0_PORT_SETTING() do{ \
+        PORT->SCLA0PCFG = PTCFG_PH04;/* allocate SCLA0 to PH04 */ \
+        PORT->PCLRH =  (1 << 4);    /* PH04 output low level */ \
+        PORT->PMH  &= ~(1 << 4);    /* PH04 is used as SCLA0 output */ \
+        PORT->POMH |=  (1 << 4);    /* PH04 is used as Open Drain output */ \
+}while(0)
+
+#endif 
 
 /* ToDo: You can allocate the SDAA0 to any desired pins with SDAA0PCFG register */
+#if 0
 #define SDAA0_PORT_SETTING() do{ \
         PORT->SDAA0PCFG = PTCFG_PD09;/* allocate SDAA0 to PD09 */ \
         PORT->PCLRD =  (1 << 9);    /* PD09 output low level */ \
@@ -1305,6 +1327,15 @@ typedef enum
         PORT->POMD |=  (1 << 9);    /* PD09 is used as Open Drain output */ \
         PORT->PMCD &= ~(1 << 9);    /* PD09 digital function */ \
 }while(0)
+#else
+#define SDAA0_PORT_SETTING() do{ \
+        PORT->SDAA0PCFG = PTCFG_PH03;/* allocate SDAA0 to PH03 */ \
+        PORT->PCLRH =  (1 << 3);    /* PH03 output low level */ \
+        PORT->PMH  &= ~(1 << 3);    /* PH03 is used as SDAA0 inout */ \
+        PORT->POMH |=  (1 << 3);    /* PH03 is used as Open Drain output */ \
+}while(0)
+
+#endif 
 
 /**
   * @brief IICA1 Port Setting（Alternative to any group2 port)
@@ -1352,9 +1383,9 @@ typedef enum
 
 /* ToDo: You can allocate the INTP2 to any desired pins with INTP2PCFG register */
 #define INTP2_PORT_SETTING() do{ \
-        PORT->INTP2PCFG = 0x02;     /* allocate INTP2 to PA02 */ \
-        PORT->PMA  |=  (1 << 2);    /* PA02 is used as INTP2 input */ \
-        PORT->PMCA &= ~(1 << 2);    /* PA02 digital function */ \
+        PORT->INTP2PCFG = 0x03;     /* allocate INTP2 to PA03 */ \
+        PORT->PMA  |=  (1 << 3);    /* PA03 is used as INTP2 input */ \
+        PORT->PMCA &= ~(1 << 3);    /* PA03 digital function */ \
 }while(0)
 
 /* ToDo: You can allocate the INTP3 to any desired pins with INTP3PCFG register */

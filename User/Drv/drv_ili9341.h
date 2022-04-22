@@ -6,14 +6,29 @@
 #endif 
 
 /* Includes ------------------------------------------------------------------*/
-#include "drv_lcd.h"
+#include "hal_lcd.h"
 
 #define ILI9341_ID                    0x9341
 
-//#define  ILI9341_LCD_PIXEL_WIDTH    ((uint16_t)240)
-//#define  ILI9341_LCD_PIXEL_HEIGHT   ((uint16_t)320)
-#define  ILI9341_LCD_PIXEL_WIDTH      ((uint16_t)LCD_W)
-#define  ILI9341_LCD_PIXEL_HEIGHT     ((uint16_t)LCD_H)
+#define ILI9341_LCD_PIXEL_WIDTH    ((uint16_t)320)
+#define ILI9341_LCD_PIXEL_HEIGHT   ((uint16_t)240)
+
+#define WHITE         	 0xFFFF
+#define BLACK         	 0x0000	  
+#define BLUE         	 0x001F  
+#define BRED             0XF81F
+#define GRED 			 0XFFE0
+#define GBLUE			 0X07FF
+#define RED           	 0xF800
+#define MAGENTA       	 0xF81F
+#define GREEN         	 0x07E0
+#define CYAN          	 0x7FFF
+#define YELLOW        	 0xFFE0
+#define BROWN 			 0XBC40 //×ØÉ«
+#define BRRED 			 0XFC07 //×ØºìÉ«
+#define GRAY  			 0X8430 //»ÒÉ«
+
+
 
 /** 
   * @brief  ILI9341 Timing  
@@ -143,7 +158,7 @@ uint16_t ili9341_ReadID(void);
 void     ili9341_WriteReg(uint8_t LCD_Reg);
 void     ili9341_WriteData(uint8_t RegValue);
 uint32_t ili9341_ReadData(uint16_t RegValue, uint8_t ReadSize);
-void     ili9341_WriteMultiData(uint8_t *const datbuf, uint16_t size);
+void     ili9341_WriteMultiData(uint16_t *const datbuf, uint16_t size);
 void     ili9341_DisplayOn(void);
 void     ili9341_DisplayOff(void);
 
@@ -166,8 +181,15 @@ void     ili9341_ClearWindow(uint16_t Xpos, uint16_t Ypos, uint16_t Width, uint1
 void	 ili9341_ClearScreen(uint16_t RGBCode);
 void	 ili9341_SetBackgroundColor(uint16_t RGBCode);
 
+void ili9341_Show_String(uint16_t Xpos, uint16_t Ypos, uint8_t* String, uint16_t len, uint16_t Color);
+void ili9341_DrawLine(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t RGBCode);
+void ili9341_DrawCircle(uint16_t x0, uint16_t y0, uint8_t r, uint16_t color );
 
-void     ili9341_Loop_Delay(uint32_t time );
+void ili9341_Loop_Delay(uint32_t time );
+void ili9341_Wr_End_Callback(void );
+void ili9341_Set_Wr_State(uint8_t state );
+uint8_t ili9341_Get_Wr_State(void );
+void ili9341_Flush(uint16_t Xpos, uint16_t Ypos, uint16_t Width, uint16_t Height, uint16_t *RGBCode);
 
 /**
   * @}

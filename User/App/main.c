@@ -16,9 +16,19 @@
 
 #include "drv_task.h"
 #include "drv_timer.h"
-#include "drv_lcd.h"
+#include "drv_ili9341.h"
+#include "drv_touch.h"
+#include "drv_mpu6050.h"
 #include "usb_phid_apl.h"
 #include "cm_backtrace.h"
+
+#include "lvgl.h"
+#include "lv_port_disp.h"
+#include "lv_port_indev.h"
+#include "lv_apps\demo\demo.h"
+#include "lv_tests\lv_test_theme\lv_test_theme_1.h" 
+#include "lv_tests\lv_test_theme\lv_test_theme_2.h"
+
 
 /* Private typedef --------------------------------------*/
 /* Private define ---------------------------------------*/
@@ -62,16 +72,35 @@ int main(void )
 
     Drv_Timer_Init();
 
-    Drv_Lcd_Init();
-	
-	Usb_Init(); /* USB sample application */
+    ili9341_Init();
 
+    Drv_Touch_Init();
+
+    Drv_MPU_Init();
+	
+	//Usb_Init(); /* USB sample application */
+
+	lv_init();		
+    
+	lv_port_disp_init();	
+
+    lv_port_indev_init();
+
+    //lv_test_theme_1(lv_theme_night_init(210, NULL));
+	demo_create();
+	
     cm_backtrace_init("CmBacktrace", "0.0.1", "0.0.1");
     
 	while(1)
 	{
+	    Drv_Touch_Scan();
+        
+	    lv_task_handler();
 	}
 }
+
+
+
 
 
 

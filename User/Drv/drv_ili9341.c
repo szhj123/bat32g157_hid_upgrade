@@ -14,21 +14,37 @@
 #include <stdio.h>
 #include "BAT32G157.h"
 #include "cm_backtrace.h"
-
-#include "drv_lcd.h"
+#include "font.h"
 #include "drv_ili9341.h"
 /* Private typedef --------------------------------------*/
+typedef enum
+{
+    ILI9341_WR_STATE_UNDEFINE = 0,
+    ILI9341_WR_STATE_IDLE,
+    ILI9341_WR_STATE_BUSY
+}ili9341_wr_state_t;
+
 /* Private define ---------------------------------------*/
+#define LCD_DEFAULT_FONT         Font8x16
+
+#define BUF_MAX_SIZE                  128
+
+
 /* Private macro ----------------------------------------*/
 /* Private function -------------------------------------*/
 /* Private variables ------------------------------------*/
-static uint16_t ArrayRGB[320] = {0};
-uint16_t back_color = 0xff00;
+uint16_t back_color = 0x001f;
 uint8_t lcdbint_cnt;
+ili9341_wr_state_t ili9341_wr_state;
+sFONT current_font;
 
 
 void ili9341_Init(void )
 {
+    LCDB_Init();
+    
+	current_font = LCD_DEFAULT_FONT;
+    
     LCD_CS_LOW();	
 	LCD_RST_LOW();
 	ili9341_Loop_Delay(120*48);
@@ -112,6 +128,8 @@ void ili9341_Init(void )
 	ili9341_ClearScreen(back_color);
 }
 
+
+
 /**
   * @brief  Writes  to the selected LCD register.
   * @param  LCD_Reg: address of the selected register.
@@ -119,12 +137,22 @@ void ili9341_Init(void )
   */
 void ili9341_WriteReg(uint8_t LCD_Reg)
 {
-  Drv_Lcd_Wr_Reg(LCD_Reg);
+    LCD_CS_LOW();
+	LCD_DC_LOW();
+	
+	Write_LBDATAL(LCD_Reg);
+
+	LCD_CS_HIGH();
 }
 
 void ili9341_WriteData(uint8_t RegValue)
 {
-  Drv_Lcd_Wr_Data(RegValue);
+    LCD_CS_LOW();
+	LCD_DC_HIGH();
+	
+	Write_LBDATAL(RegValue);
+
+	LCD_CS_HIGH();
 }
 
 void ili9341_ClearScreen(uint16_t RGBCode)
@@ -132,17 +160,31 @@ void ili9341_ClearScreen(uint16_t RGBCode)
     #if 0
 	ili9341_ClearWindow(0, 0, ILI9341_LCD_PIXEL_WIDTH, ILI9341_LCD_PIXEL_HEIGHT, RGBCode);
     #else
+    uint32_t size = ILI9341_LCD_PIXEL_WIDTH * ILI9341_LCD_PIXEL_HEIGHT; 
+    
 	ili9341_SetDisplayWindow(0, 0, ILI9341_LCD_PIXEL_WIDTH, ILI9341_LCD_PIXEL_HEIGHT);
 
-    Drv_Lcd_ClearScreen(RGBCode, ILI9341_LCD_PIXEL_WIDTH * ILI9341_LCD_PIXEL_HEIGHT);
+    LCD_CS_LOW();
+	LCD_DC_HIGH();
+
+    back_color = RGBCode;
+
+    LCDB_Wr_DMA_Fix_SrcAddr(&back_color, size, ili9341_Wr_End_Callback);
+
+    ili9341_Set_Wr_State(ILI9341_WR_STATE_BUSY);
+    
+    while(ili9341_Get_Wr_State() != ILI9341_WR_STATE_IDLE);
+
+	LCD_CS_HIGH();
+    
     #endif 
 }
 
 void ili9341_ClearWindow(uint16_t Xpos, uint16_t Ypos, uint16_t Width, uint16_t Height, uint16_t RGBCode)
 {
 	uint32_t count, i;
-	uint16_t buff[128];
-	for(i = 0; i < 128; i++)
+	uint16_t buff[BUF_MAX_SIZE];
+	for(i = 0; i < BUF_MAX_SIZE; i++)
 	{
 		buff[i] = RGBCode;
 	}
@@ -151,13 +193,180 @@ void ili9341_ClearWindow(uint16_t Xpos, uint16_t Ypos, uint16_t Width, uint16_t 
     
 	count = Width * Height;
 
-	while(count > 128)
+	while(count > BUF_MAX_SIZE)
 	{
-		ili9341_WriteMultiData((uint8_t*)buff , 128*2);
-		count -= 128;
+		ili9341_WriteMultiData(buff , BUF_MAX_SIZE);
+		count -= BUF_MAX_SIZE;
 	}
     
-	ili9341_WriteMultiData((uint8_t*)buff , count*2);
+	ili9341_WriteMultiData(buff , count);
+}
+
+void ili9341_DrawLine(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t RGBCode)
+{
+	uint16_t t; 
+	int xerr=0,yerr=0,delta_x,delta_y,distance; 
+	int incx,incy,uRow,uCol; 
+	delta_x=x2-x1; 
+	delta_y=y2-y1; 
+	uRow=x1; 
+	uCol=y1; 
+    
+	if(delta_x > 0)
+    {
+        incx = 1;
+	}
+	else if(delta_x == 0)
+    {
+        incx = 0;
+	}
+	else 
+    {
+        incx = -1;
+        delta_x = -delta_x;
+    } 
+    
+	if(delta_y > 0)
+    {
+        incy = 1; 
+	}
+	else if(delta_y == 0)
+	{
+        incy=0;
+	}
+	else
+    {
+        incy = -1;
+        delta_y = -delta_y;
+    } 
+    
+	if(delta_x > delta_y)
+	{
+        distance = delta_x; 
+	}
+	else 
+	{
+        distance = delta_y; 
+	}
+    
+	for(t=0;t<=distance+1;t++ )
+	{  
+		ili9341_WritePixel(uRow, uCol, RGBCode);
+		xerr+=delta_x ; 
+		yerr+=delta_y ; 
+		if(xerr>distance) 
+		{ 
+			xerr-=distance; 
+			uRow+=incx; 
+		} 
+		if(yerr>distance) 
+		{ 
+			yerr-=distance; 
+			uCol+=incy; 
+		} 
+	}  
+}    
+
+void ili9341_DrawCircle(uint16_t x0, uint16_t y0, uint8_t r, uint16_t color )
+{
+    int a,b;
+	int di;
+	a=0;b=r;	  
+	di=3-(r<<1);             
+	while(a<=b)
+	{
+		ili9341_WritePixel(x0+a,y0-b,color);             //5
+ 		ili9341_WritePixel(x0+b,y0-a,color);             //0           
+		ili9341_WritePixel(x0+b,y0+a,color);             //4               
+		ili9341_WritePixel(x0+a,y0+b,color);             //6 
+		ili9341_WritePixel(x0-a,y0+b,color);             //1       
+ 		ili9341_WritePixel(x0-b,y0+a,color);             
+		ili9341_WritePixel(x0-a,y0-b,color);             //2             
+  		ili9341_WritePixel(x0-b,y0-a,color);             //7     	         
+		a++;
+		//Ê¹ÓÃBresenhamËã·¨»­Ô²     
+		if(di<0)di +=4*a+6;	  
+		else
+		{
+			di+=10+4*(a-b);   
+			b--;
+		} 						    
+	}
+}
+
+
+void ili9341_WritePixel(uint16_t Xpos, uint16_t Ypos, uint16_t RGBCode)
+{
+  if((Xpos >= ILI9341_LCD_PIXEL_WIDTH) || (Ypos >= ILI9341_LCD_PIXEL_HEIGHT)) 
+  {
+    return;
+  }
+  
+  /* Set Cursor */
+  ili9341_SetCursor(Xpos, Ypos);
+  
+  ili9341_WriteData(RGBCode >> 8);
+  
+  ili9341_WriteData(RGBCode & 0xff);
+}  
+
+
+void ili9341_DrawMonoText(uint16_t Xpos, uint16_t Ypos, uint8_t width, uint8_t height, const uint16_t *TextTable, uint16_t RGBCode)
+{
+	uint32_t i, j, k = 0;
+	uint16_t tempbuf[16];	//max font width
+	uint16_t  temp, start_bit;
+	
+	if((Xpos >= ILI9341_LCD_PIXEL_WIDTH) || (Ypos >= ILI9341_LCD_PIXEL_HEIGHT)) 
+    {
+      return;
+    }
+	
+	ili9341_SetDisplayWindow(Xpos, Ypos, width, height); 
+	start_bit = 16 - width;	//font table 16 bit - font display width
+	for(i = 0; i < height; i++)		//one row
+	{
+		temp = *TextTable;
+		for(j = start_bit; j < 16; j++)
+		{
+			if((temp & (0x8000>>j)) != 0 )
+			{
+				//tempbuf[k--] = RGBCode;		//font table 16*24 is a mirror
+				tempbuf[k++] = RGBCode;
+			}
+			else
+			{
+				//tempbuf[k--] = 0xffff;
+				tempbuf[k++] = back_color;
+			}
+		}
+		ili9341_WriteMultiData(tempbuf , width);	//each dot has 2 bytes(RGB 565)
+		TextTable++;
+		//k = width -1;
+		k = 0;
+	}
+}
+
+
+void ili9341_DrawAscii(uint16_t Xpos, uint16_t Ypos, uint8_t Ascii, uint16_t Color)
+{
+    Ascii -= 0x20;
+    
+	ili9341_DrawMonoText(Xpos, Ypos, current_font.Width, current_font.Height, \
+				         &current_font.table[Ascii * current_font.Height], Color);	 //font table is 16 bit width,no matter the font width, table fill 0 at begai
+}
+
+
+void ili9341_Show_String(uint16_t Xpos, uint16_t Ypos, uint8_t* String, uint16_t len, uint16_t Color)
+{
+    while(len-- > 0)
+	{
+		ili9341_DrawAscii(Xpos, Ypos, *String++, Color);
+        
+		Xpos += current_font.Width;
+	}
+
+    
 }
 
 
@@ -179,10 +388,42 @@ void ili9341_SetDisplayWindow(uint16_t Xpos, uint16_t Ypos, uint16_t Width, uint
 	ili9341_WriteReg(LCD_GRAM);
 }
 
-
-void ili9341_WriteMultiData(uint8_t *const datbuf, uint16_t size)
+void ili9341_SetCursor(uint16_t Xpos, uint16_t Ypos)
 {
-	Drv_Lcd_Wr_Multi_Data(datbuf, size);
+  ili9341_WriteReg(LCD_COLUMN_ADDR);
+  ili9341_WriteData(Xpos >> 8);
+  ili9341_WriteData(Xpos & 0xff);
+  ili9341_WriteReg(LCD_PAGE_ADDR); 
+  ili9341_WriteData(Ypos >> 8);
+  ili9341_WriteData(Ypos & 0xff);
+  ili9341_WriteReg(LCD_GRAM);
+}
+
+
+
+void ili9341_WriteMultiData(uint16_t *datbuf, uint16_t size)
+{
+	uint16_t i;
+    
+	LCD_CS_LOW();
+	LCD_DC_HIGH();
+
+    #if 0
+	for(i = 0; i < size; i++)
+	{        
+		Write_LBDATA(datbuf[i]);
+	}
+    #else
+
+    LCDB_Wr_DMA(datbuf, size, ili9341_Wr_End_Callback);
+
+    ili9341_Set_Wr_State(ILI9341_WR_STATE_BUSY);
+    
+    while(ili9341_Get_Wr_State() != ILI9341_WR_STATE_IDLE);
+
+    #endif 
+    
+	LCD_CS_HIGH();
 }
 
 void ili9341_Loop_Delay(uint32_t time )
@@ -195,5 +436,57 @@ void ili9341_Loop_Delay(uint32_t time )
         sf_cnt --;
     }
 }
+
+
+void ili9341_Wr_End_Callback(void )
+{
+    ili9341_Set_Wr_State(ILI9341_WR_STATE_IDLE);
+}
+
+void ili9341_Set_Wr_State(uint8_t state )
+{
+    ili9341_wr_state = state;
+}
+
+uint8_t ili9341_Get_Wr_State(void )
+{
+    return ili9341_wr_state;
+}
+
+void ili9341_Flush(uint16_t Xpos, uint16_t Ypos, uint16_t Width, uint16_t Height, uint16_t *RGBCode)
+{
+	uint32_t count;
+    uint16_t i;
+    uint16_t buf[BUF_MAX_SIZE];
+    
+ 	ili9341_SetDisplayWindow(Xpos, Ypos, Width, Height);
+    
+	count = Width * Height;
+
+    while(count > BUF_MAX_SIZE)
+    {
+        for(i=0;i<BUF_MAX_SIZE;i++)
+        {
+            buf[i] = ((*RGBCode) >> 8) | ((*RGBCode) << 8);
+
+            RGBCode++;
+        }
+
+        count -= BUF_MAX_SIZE;
+        
+        ili9341_WriteMultiData(buf , BUF_MAX_SIZE);
+    }
+
+    for(i=0;i<count;i++)
+    {
+        buf[i] = ((*RGBCode) >> 8) | ((*RGBCode) << 8);
+
+        RGBCode++;
+    }
+
+	ili9341_WriteMultiData(buf , count);
+
+}
+
 
 

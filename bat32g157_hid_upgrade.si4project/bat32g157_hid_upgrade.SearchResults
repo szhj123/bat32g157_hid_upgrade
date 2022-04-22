@@ -1,4 +1,4 @@
----- Drv_Lcd_Init Matches (3 in 3 files) ----
-drv_lcd.c (User\Drv) line 43 : void Drv_Lcd_Init(void )
-drv_lcd.h (User\Drv) line 13 : void Drv_Lcd_Init(void );
-main in main.c (User\App) :     Drv_Lcd_Init();
+---- LCDB_Wr_DMA Matches (3 in 3 files) ----
+ili9341_WriteMultiData in drv_ili9341.c (User\Drv) :     LCDB_Wr_DMA(datbuf, size, ili9341_Wr_End_Callback);
+hal_lcd.c (User\Hal) line 98 : void LCDB_Wr_DMA(uint16_t *const, uint32_t size, lcdb_callback_t callback )
+hal_lcd.h (User\Hal) line 164 : void LCDB_Wr_DMA(const uint8_t *buf, uint32_t size, lcdb_callback_t callback );

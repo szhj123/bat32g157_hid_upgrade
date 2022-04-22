@@ -3,6 +3,8 @@
 
 #include "hardware.h"
 
+
+
 typedef void (*lcdb_callback_t)(void );
 
 #define Read_LBCTL_BYF() (LCDB->LBCTL&LCDB_LBCTL_BYF_Msk)
@@ -156,10 +158,10 @@ typedef struct
 /***********************************************************************************************************************
 Global functions
 ***********************************************************************************************************************/
-void LCDB_Init(LCDB_Typedef* pLcdb);
+void LCDB_Init(void );
 void LCDB_Start(void);
 void LCDB_Stop(void);
-void LCDB_Wr_DMA(const uint8_t *buf, uint32_t size, lcdb_callback_t callback );
+void LCDB_Wr_DMA(uint16_t *buf, uint32_t size, lcdb_callback_t callback );
 void LCDB_Wr_DMA_Fix_SrcAddr(const uint16_t *u16Data, uint32_t size, lcdb_callback_t callback );
 void LCDB_Isr_Handler(void );
 

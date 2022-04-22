@@ -23,13 +23,23 @@
 /* Private macro ----------------------------------------*/
 /* Private function -------------------------------------*/
 /* Private variables ------------------------------------*/
+static LCDB_Typedef Lcdb =
+{
+    .mode = LCDB_MODE_TYPE_8080,    /* 8080 Mode */
+    .clock_div = LCDB_CLOCK_DIV_1,	/* 1 divider */
+    .cycle = LDB_CYCLE_8T,          /* 6T cycles */
+    .wait_cycle = LDB_WAIT_CYCLE_2T	/* 2T wait cycles */
+};
+
 lcdb_callback_t lcdb_callback = NULL;
 static uint8_t lcdb_sent_cnt;
 static uint32_t lcdb_dma_size;
 static uint16_t lcd_rgb_color;
 
-void LCDB_Init(LCDB_Typedef* pLcdb)
+void LCDB_Init(void )
 {
+   LCDB_Typedef *pLcdb = (LCDB_Typedef *)&Lcdb;
+    
    CGC->PER1 |= CGC_PER1_LCDBEN_Msk;	/*enable lcdb clock*/
 	
    if(LCDB_MODE_TYPE_8080 == pLcdb->mode)
@@ -85,7 +95,7 @@ void LCDB_Stop(void)
     INTC_ClearPendingIRQ(LCDB_IRQn); /* clear LCDB interrupt flag */
 }
 
-void LCDB_Wr_DMA(const uint8_t *buf, uint32_t size, lcdb_callback_t callback )
+void LCDB_Wr_DMA(uint16_t *buf, uint32_t size, lcdb_callback_t callback )
 {
     lcdb_dma_size = size;
     
@@ -94,9 +104,9 @@ void LCDB_Wr_DMA(const uint8_t *buf, uint32_t size, lcdb_callback_t callback )
                                              (0 << CTRL_DMACR_DAMOD_Pos)  | (1 << CTRL_DMACR_SAMOD_Pos) |
                                              (0 << CTRL_DMACR_RPTSEL_Pos)| (DMA_MODE_NORMAL << CTRL_DMACR_MODE_Pos);
     DMAVEC->CTRL[DMA_CTRL_DATA_LCDB].DMBLS = 1;
-    DMAVEC->CTRL[DMA_CTRL_DATA_LCDB].DMACT = size/2-1;
-    DMAVEC->CTRL[DMA_CTRL_DATA_LCDB].DMRLD = size/2-1;
-    DMAVEC->CTRL[DMA_CTRL_DATA_LCDB].DMSAR = (uint32_t)((uint16_t *)buf);
+    DMAVEC->CTRL[DMA_CTRL_DATA_LCDB].DMACT = size-1;
+    DMAVEC->CTRL[DMA_CTRL_DATA_LCDB].DMRLD = size-1;
+    DMAVEC->CTRL[DMA_CTRL_DATA_LCDB].DMSAR = (uint32_t)buf;
     DMAVEC->CTRL[DMA_CTRL_DATA_LCDB].DMDAR = (uint32_t)((uint16_t*)&LCDB->LBDATA);
 
     /* init DMA registers */
@@ -105,11 +115,11 @@ void LCDB_Wr_DMA(const uint8_t *buf, uint32_t size, lcdb_callback_t callback )
     DMA_Enable(DMA_VECTOR_LCDB);
 	LCDB_Start();
 
-    lcdb_callback = callback;
+    lcdb_callback = callback;   
 
     lcdb_sent_cnt = 1;
 
-    LCDB->LBDATA = *(uint16_t *)&buf[0];
+    LCDB->LBDATA = buf[0];
 }
 
 void LCDB_Wr_DMA_Fix_SrcAddr(const uint16_t *u16Data, uint32_t size, lcdb_callback_t callback )
