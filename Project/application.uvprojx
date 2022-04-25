@@ -483,6 +483,11 @@
               <FileType>1</FileType>
               <FilePath>..\User\Usb\usb_phid_custom_apl.c</FilePath>
             </File>
+            <File>
+              <FileName>app_mpu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\App\app_mpu.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -519,9 +524,14 @@
               <FilePath>..\User\Drv\font.c</FilePath>
             </File>
             <File>
-              <FileName>drv_mpu6050.c</FileName>
+              <FileName>drv_mpu.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\User\Drv\drv_mpu6050.c</FilePath>
+              <FilePath>..\User\Drv\drv_mpu.c</FilePath>
+            </File>
+            <File>
+              <FileName>drv_mpu_dmp_motion_driver.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\Drv\drv_mpu_dmp_motion_driver.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -559,9 +569,9 @@
               <FilePath>..\User\Hal\hal_touch.c</FilePath>
             </File>
             <File>
-              <FileName>hal_mpu6050.c</FileName>
+              <FileName>hal_mpu.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\User\Hal\hal_mpu6050.c</FilePath>
+              <FilePath>..\User\Hal\hal_mpu.c</FilePath>
             </File>
           </Files>
         </Group>

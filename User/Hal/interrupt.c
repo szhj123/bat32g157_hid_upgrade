@@ -14,6 +14,7 @@
 #include "hal_timer.h"
 #include "hal_task.h"
 #include "hal_lcd.h"
+#include "hal_mpu.h"
 #include "lvgl.h"
 /* Private typedef --------------------------------------*/
 /* Private define ---------------------------------------*/
@@ -29,8 +30,10 @@ void tm40_channel0_interrupt(void )
     INTC_ClearPendingIRQ(TM00_IRQn);    /* clear INTTM00 interrupt flag */
 
     Hal_Timer_Isr_Handler();
-	
-		lv_tick_inc(1);
+
+    lv_tick_inc(1);
+
+    Hal_MPU_Delay_Count();
 
 }
 

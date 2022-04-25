@@ -17,13 +17,6 @@
 #include "font.h"
 #include "drv_ili9341.h"
 /* Private typedef --------------------------------------*/
-typedef enum
-{
-    ILI9341_WR_STATE_UNDEFINE = 0,
-    ILI9341_WR_STATE_IDLE,
-    ILI9341_WR_STATE_BUSY
-}ili9341_wr_state_t;
-
 /* Private define ---------------------------------------*/
 #define LCD_DEFAULT_FONT         Font8x16
 
@@ -443,7 +436,7 @@ void ili9341_Wr_End_Callback(void )
     ili9341_Set_Wr_State(ILI9341_WR_STATE_IDLE);
 }
 
-void ili9341_Set_Wr_State(uint8_t state )
+void ili9341_Set_Wr_State(ili9341_wr_state_t state )
 {
     ili9341_wr_state = state;
 }

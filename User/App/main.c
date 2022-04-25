@@ -18,7 +18,7 @@
 #include "drv_timer.h"
 #include "drv_ili9341.h"
 #include "drv_touch.h"
-#include "drv_mpu6050.h"
+#include "drv_mpu.h"
 #include "usb_phid_apl.h"
 #include "cm_backtrace.h"
 
@@ -29,6 +29,7 @@
 #include "lv_tests\lv_test_theme\lv_test_theme_1.h" 
 #include "lv_tests\lv_test_theme\lv_test_theme_2.h"
 
+#include "app_mpu.h"
 
 /* Private typedef --------------------------------------*/
 /* Private define ---------------------------------------*/
@@ -76,7 +77,7 @@ int main(void )
 
     Drv_Touch_Init();
 
-    Drv_MPU_Init();
+    App_MPU_Init();
 	
 	//Usb_Init(); /* USB sample application */
 
@@ -94,8 +95,12 @@ int main(void )
 	while(1)
 	{
 	    Drv_Touch_Scan();
+
+        App_DMP_update();
         
 	    lv_task_handler();
+
+        
 	}
 }
 

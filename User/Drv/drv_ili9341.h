@@ -145,7 +145,14 @@
 
 /* Size of read registers */
 #define LCD_READ_ID4_SIZE           3      /* Size of Read ID4 */
-   
+
+typedef enum
+{
+    ILI9341_WR_STATE_UNDEFINE = 0,
+    ILI9341_WR_STATE_IDLE,
+    ILI9341_WR_STATE_BUSY
+}ili9341_wr_state_t;
+
 /**
   * @}
   */
@@ -187,8 +194,8 @@ void ili9341_DrawCircle(uint16_t x0, uint16_t y0, uint8_t r, uint16_t color );
 
 void ili9341_Loop_Delay(uint32_t time );
 void ili9341_Wr_End_Callback(void );
-void ili9341_Set_Wr_State(uint8_t state );
-uint8_t ili9341_Get_Wr_State(void );
+void ili9341_Set_Wr_State(ili9341_wr_state_t state );
+ili9341_wr_state_t ili9341_Get_Wr_State(void );
 void ili9341_Flush(uint16_t Xpos, uint16_t Ypos, uint16_t Width, uint16_t Height, uint16_t *RGBCode);
 
 /**

@@ -1,4 +1,3 @@
----- LCDB_Wr_DMA Matches (3 in 3 files) ----
-ili9341_WriteMultiData in drv_ili9341.c (User\Drv) :     LCDB_Wr_DMA(datbuf, size, ili9341_Wr_End_Callback);
-hal_lcd.c (User\Hal) line 98 : void LCDB_Wr_DMA(uint16_t *const, uint32_t size, lcdb_callback_t callback )
-hal_lcd.h (User\Hal) line 164 : void LCDB_Wr_DMA(const uint8_t *buf, uint32_t size, lcdb_callback_t callback );
+---- ili9341_wr_state_t Matches (2 in 1 files) ----
+drv_ili9341.c (User\Drv) line 25 : }ili9341_wr_state_t;
+drv_ili9341.c (User\Drv) line 38 : ili9341_wr_state_t ili9341_wr_state;
